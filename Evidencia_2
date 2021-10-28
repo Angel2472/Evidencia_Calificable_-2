@@ -1,0 +1,78 @@
+import os
+import csv
+import datetime
+import pandas as pd
+
+pd.set_option('mode.chained_assignment', None)
+registro_ventas={'Fecha':[],'Cliente':[],'Folio':[],'Producto':[],'Cantidad Ventas':[],'Precio':[], 'Subtotal Producto':[]}
+folio=0
+
+while (True):
+    respuesta = 1
+    print(' ')
+    print('MENU PRINCIPAL')
+    print(' ')
+    print('Registrar Venta [1].')
+    print('Consultar Venta [2].')
+    print('Reporte de Ventas [3].')
+    print('Salir [4].')
+    print(' ')
+    op = int(input('¿Qué deseas hacer?'))
+
+    if op == 1:
+        nombre = input('\nDame el nombre del cliente: ')
+        folio = folio+1
+        
+        while respuesta == 1:
+            descripcion_articulo = input('Dime la descripcion del articulo: ')
+            cantidad_piezas = int(input('Dime la cantidad de piezas: '))
+            precio_venta = int(input('Dame el precio de venta: '))
+            subt_producto= cantidad_piezas*precio_venta
+            fecha_actual = datetime.date.today()
+            registro_ventas['Producto'].append(descripcion_articulo)
+            registro_ventas['Cantidad Ventas'].append(cantidad_piezas)
+            registro_ventas['Precio'].append(precio_venta)
+            registro_ventas['Cliente'].append(nombre)
+            registro_ventas['Fecha'].append(fecha_actual)
+            registro_ventas['Folio'].append(folio)
+            registro_ventas['Subtotal Producto'].append(subt_producto)
+#          Lo guardamos en la variable ventas_registro
+            ventas_registro = pd.DataFrame(registro_ventas)
+#          Se indexa los valores dentro del key 'Clientes'
+            index_cliente =ventas_registro.set_index('Cliente')
+            respuesta = int(input('\n ¿Deseas capturar otro registro? \n(1-Si / 0-No): '))
+            if respuesta == 0:
+#            Busca el valor de la variable nombre previamente ingresada
+                nombre_ingresado=index_cliente.loc[nombre]
+#               imprime el data frame
+                print(nombre_ingresado)
+                print(' ')
+                subtotal=sum(nombre_ingresado['Subtotal Producto'])
+                iva = subtotal * 0.16
+                total = subtotal + iva
+                print(f'El subtotal a pagar del cliente {nombre} es de ${subtotal}')
+                print(f'El IVA a pagar del cliente {nombre} es de ${iva}')
+                print(f'El total a pagar del cliente {nombre} es de ${total}')
+                
+    elif op == 2:
+        consulta_venta = input ('\nIngresa el nombre del cliente a consultar: \n')
+        if consulta_venta in index_cliente.index:
+            nombre_ingresado=index_cliente.loc[consulta_venta]
+            print(nombre_ingresado)
+            print(f'El total a pagar del cliente {consulta_venta} es de ${total}')
+        else:
+            print('Ese cliente no esta registrado')
+            
+    elif op == 3:
+        indexar_fecha =ventas_registro.set_index('Fecha')
+        fecha_reporte = input('Dime la fecha para el reporte de ventas (dd/mm/aaaa):  \n')
+        fecha_procesada = datetime.datetime.strptime(fecha_reporte, '%d/%m/%Y').date()
+        if fecha_procesada in indexar_fecha.index:
+            fecha = indexar_fecha.loc[fecha_procesada]
+            print(fecha)
+            print(f'El total de las ventas del dia {fecha_procesada} es de ${total}')
+        else:
+            print('No se encuentran reporte de ventas en esa fecha')
+    elif op == 4:
+            print('HAZ SALIDO DEL SISTEMA""GRACIAS POR UTILIZAR EL PROGRAMA')
+            break
