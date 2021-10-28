@@ -76,3 +76,8 @@ while (True):
     elif op == 4:
             print('HAZ SALIDO DEL SISTEMA""GRACIAS POR UTILIZAR EL PROGRAMA')
             break
+ 
+    if os.path.isfile('registro_ventas.csv'):
+        ventas_registro.to_csv(r'registro_ventas.csv',index=False)
+    else:
+        ventas_registro.to_csv(r'registro_ventas.csv',index=False)
